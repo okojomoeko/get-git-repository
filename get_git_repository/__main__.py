@@ -4,6 +4,7 @@ import sys
 import json
 import re
 from pathlib2 import Path
+from getpass import getpass
 
 
 def get_repository(username, accesstoken, visibility="all", page="1"):
@@ -42,7 +43,7 @@ def main():
             return
 
     username = input("Username: ")
-    accesstoken = input("Accesstoken: ")
+    accesstoken = getpass("Accesstoken: ")
 
     idx = 1
     _data = []
