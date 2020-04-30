@@ -15,7 +15,7 @@ setup(
 
     # Project uses reStructuredText, so ensure that the docutils get
     # installed or upgraded on the target machine
-    install_requires=["requests", "pathlib2"],
+    install_requires=["requests"],
     python_requires='>=3.7',
 
     # metadata to display on PyPI

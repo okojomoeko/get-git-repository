@@ -1,7 +1,7 @@
 import requests
 import os
 import re
-from pathlib2 import Path
+from pathlib import Path
 from getpass import getpass
 
 
