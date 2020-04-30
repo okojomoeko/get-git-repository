@@ -1,21 +1,21 @@
 import requests
 import os
-import sys
-import json
 import re
 from pathlib2 import Path
+from getpass import getpass
 
 
-def get_repository(username, accesstoken, visibility="all", page="1"):
+def get_repository(username, accesstoken, visibility="all", page=1):
 
     params = (
-        ('per_page', '100'),
         ('visibility', visibility),
         ('page', page),
+        ('per_page', '100'),
     )
-    
-    response = requests.get('https://api.github.com/user/repos', params=params, auth=(username, accesstoken))
-    return response.json()
+
+    response = requests.get('https://api.github.com/user/repos',
+                            params=params, auth=(username, accesstoken))
+    return response
 
 
 def main():
@@ -25,7 +25,6 @@ def main():
             path = str(Path.cwd())
         elif re.match("^~/*", str(_path)):
             path = str(_path).replace("~", str(Path.home()))
-            
         else:
             print("Input correct directory")
             return
@@ -34,7 +33,8 @@ def main():
 
     print("Your path: {0}\n".format(path))
     if not Path(path).exists():
-        res = input("Choose directory is not exist. Create directory?[y/n]: ").lower()
+        res = input(
+            "Choose directory is not exist. Create directory?[y/n]: ").lower()
         if res == "y":
             os.mkdir(path)
         elif res == "n":
@@ -42,18 +42,23 @@ def main():
             return
 
     username = input("Username: ")
-    accesstoken = input("Accesstoken: ")
+    accesstoken = getpass("Accesstoken: ")
 
     idx = 1
     _data = []
     while True:
-        temp = get_repository(username, accesstoken, page=idx)
+        response = get_repository(username, accesstoken, page=idx)
+        status_code = response.status_code
+        if status_code != requests.codes.ok:
+            print("Error: {}".format(response.headers["status"]))
+            return
+        temp = response.json()
         if temp == []:
             break
         else:
             _data.append(temp)
         idx += 1
-    
+
     repos = os.listdir(path)
 
     os.chdir(path)
@@ -63,9 +68,10 @@ def main():
         for d in data:
             if d not in repos:
                 os.system("git clone "+d["clone_url"])
-                result += "Cloned repository: {0}\n".format(d["name"])
+                result += "Cloned repository: {}\n".format(d["name"])
 
     print(result)
 
-if __name__ == "__main__":    
+
+if __name__ == "__main__":
     main()
