@@ -15,7 +15,7 @@ def get_repository(username, accesstoken, visibility="all", page=1):
 
     response = requests.get('https://api.github.com/user/repos',
                             params=params, auth=(username, accesstoken))
-    return response.json()
+    return response
 
 
 def main():
@@ -47,7 +47,12 @@ def main():
     idx = 1
     _data = []
     while True:
-        temp = get_repository(username, accesstoken, page=idx)
+        response = get_repository(username, accesstoken, page=idx)
+        status_code = response.status_code
+        if status_code != requests.codes.ok:
+            print("Error: {}".format(response.headers["status"]))
+            return
+        temp = response.json()
         if temp == []:
             break
         else:
@@ -63,7 +68,7 @@ def main():
         for d in data:
             if d not in repos:
                 os.system("git clone "+d["clone_url"])
-                result += "Cloned repository: {0}\n".format(d["name"])
+                result += "Cloned repository: {}\n".format(d["name"])
 
     print(result)
 
