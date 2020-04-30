@@ -7,10 +7,10 @@ setup(
     name="get-git-repository",
     version="0.1.0",
     packages=find_packages(),
-    entry_points = {
+    entry_points={
         'console_scripts': [
             'get-git-repository = get_git_repository.__main__:main'
-            ]
+        ]
     },
 
     # Project uses reStructuredText, so ensure that the docutils get
