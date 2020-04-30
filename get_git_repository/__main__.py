@@ -1,21 +1,20 @@
 import requests
 import os
-import sys
-import json
 import re
 from pathlib2 import Path
 from getpass import getpass
 
 
-def get_repository(username, accesstoken, visibility="all", page="1"):
+def get_repository(username, accesstoken, visibility="all", page=1):
 
     params = (
-        ('per_page', '100'),
         ('visibility', visibility),
         ('page', page),
+        ('per_page', '100'),
     )
-    
-    response = requests.get('https://api.github.com/user/repos', params=params, auth=(username, accesstoken))
+
+    response = requests.get('https://api.github.com/user/repos',
+                            params=params, auth=(username, accesstoken))
     return response.json()
 
 
@@ -26,7 +25,6 @@ def main():
             path = str(Path.cwd())
         elif re.match("^~/*", str(_path)):
             path = str(_path).replace("~", str(Path.home()))
-            
         else:
             print("Input correct directory")
             return
@@ -35,7 +33,8 @@ def main():
 
     print("Your path: {0}\n".format(path))
     if not Path(path).exists():
-        res = input("Choose directory is not exist. Create directory?[y/n]: ").lower()
+        res = input(
+            "Choose directory is not exist. Create directory?[y/n]: ").lower()
         if res == "y":
             os.mkdir(path)
         elif res == "n":
@@ -54,7 +53,7 @@ def main():
         else:
             _data.append(temp)
         idx += 1
-    
+
     repos = os.listdir(path)
 
     os.chdir(path)
@@ -68,5 +67,6 @@ def main():
 
     print(result)
 
-if __name__ == "__main__":    
+
+if __name__ == "__main__":
     main()
